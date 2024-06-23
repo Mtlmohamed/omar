@@ -118,33 +118,36 @@
                 let diff64 = 0;
                 let diff128 = 0;
 
-                // Calculate the differences
-                while (diffDrops >= 32) {
-                    diffOZ += 1;
-                    diffDrops -= 32;
-                }
-                while (diffDrops >= 1) {
-                    diff32 += 1;
-                    diffDrops -= 1;
-                }
-                while (diffDrops >= 0.5) {
-                    diff64 += 1;
-                    diffDrops -= 0.5;
-                }
-                while (diffDrops >= 0.25) {
-                    diff128 += 1;
-                    diffDrops -= 0.25;
+                // Balance the smallest units first
+                if (current128 > destination128) {
+                    diff128 = current128 - destination128;
+                    if (destination64 > current64) {
+                        diff64 = destination64 - current64;
+                        diff128 -= diff64 * 2;
+                    } else {
+                        diff64 = current64 - destination64;
+                        diff128 += diff64 * 2;
+                    }
+                } else {
+                    diff128 = destination128 - current128;
+                    if (current64 > destination64) {
+                        diff64 = current64 - destination64;
+                        diff128 += diff64 * 2;
+                    } else {
+                        diff64 = destination64 - current64;
+                        diff128 -= diff64 * 2;
+                    }
                 }
 
-                // Balance the smallest units
-                while (diff128 >= 2) {
-                    diff64 += 1;
-                    diff128 -= 2;
+                if (diff128 < 0) {
+                    diff64 += Math.floor(-diff128 / 2);
+                    diff128 = (diff128 % 2 + 2) % 2;
                 }
-                while (diff64 >= 2) {
-                    diff32 += 1;
-                    diff64 -= 2;
-                }
+
+                // Convert remaining drops into diff32
+                diff32 = diffDrops - (diff64 * 2 + diff128 * 0.5);
+
+                // Convert diff32 into diffOZ
                 while (diff32 >= 32) {
                     diffOZ += 1;
                     diff32 -= 32;
