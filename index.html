@@ -11,74 +11,12 @@
         <h1>Paint Ingredient Calculator</h1>
         <form id="paintForm">
             <h2>Current Formula</h2>
-            <div class="formula">
-                <div class="row">
-                    <label for="currentColorant">Colorant:</label>
-                    <select id="currentColorant" name="currentColorant">
-                        <option value="B1">B1 (Black)</option>
-                        <option value="R2">R2 (New Red)</option>
-                        <option value="Y1">Y1 (Yellow)</option>
-                        <option value="Y3">Y3 (Deep Gold)</option>
-                        <option value="W1">W1 (White)</option>
-                        <option value="N1">N1 (Raw Amber)</option>
-                        <option value="R2">R2 (Maroon)</option>
-                        <option value="L1">L1 (Bleu)</option>
-                        <option value="G2">G2 (New Green)</option>
-                        <option value="R3">R3 (Magenta)</option>
-                    </select>
-                </div>
-                <div class="row">
-                    <label for="currentOZ">OZ:</label>
-                    <input type="number" id="currentOZ" name="currentOZ" max="32">
-                </div>
-                <div class="row">
-                    <label for="current32">32:</label>
-                    <input type="number" id="current32" name="current32" max="32">
-                </div>
-                <div class="row">
-                    <label for="current64">64:</label>
-                    <input type="number" id="current64" name="current64" max="2">
-                </div>
-                <div class="row">
-                    <label for="current128">128:</label>
-                    <input type="number" id="current128" name="current128" max="4">
-                </div>
-            </div>
+            <div id="currentFormulaContainer"></div>
+            <button type="button" onclick="addCurrentFormula()">Add Colorant</button>
             
             <h2>Destination Formula</h2>
-            <div class="formula">
-                <div class="row">
-                    <label for="destinationColorant">Colorant:</label>
-                    <select id="destinationColorant" name="destinationColorant">
-                        <option value="B1">B1 (Black)</option>
-                        <option value="R2">R2 (New Red)</option>
-                        <option value="Y1">Y1 (Yellow)</option>
-                        <option value="Y3">Y3 (Deep Gold)</option>
-                        <option value="W1">W1 (White)</option>
-                        <option value="N1">N1 (Raw Amber)</option>
-                        <option value="R2">R2 (Maroon)</option>
-                        <option value="L1">L1 (Bleu)</option>
-                        <option value="G2">G2 (New Green)</option>
-                        <option value="R3">R3 (Magenta)</option>
-                    </select>
-                </div>
-                <div class="row">
-                    <label for="destinationOZ">OZ:</label>
-                    <input type="number" id="destinationOZ" name="destinationOZ" max="32">
-                </div>
-                <div class="row">
-                    <label for="destination32">32:</label>
-                    <input type="number" id="destination32" name="destination32" max="32">
-                </div>
-                <div class="row">
-                    <label for="destination64">64:</label>
-                    <input type="number" id="destination64" name="destination64" max="2">
-                </div>
-                <div class="row">
-                    <label for="destination128">128:</label>
-                    <input type="number" id="destination128" name="destination128" max="4">
-                </div>
-            </div>
+            <div id="destinationFormulaContainer"></div>
+            <button type="button" onclick="addDestinationFormula()">Add Colorant</button>
 
             <button type="button" onclick="calculateDifference()">Calculate Difference</button>
         </form>
@@ -87,34 +25,95 @@
     </div>
 
     <script>
-        function calculateDifference() {
-            const currentOZ = parseInt(document.getElementById('currentOZ').value) || 0;
-            const current32 = parseInt(document.getElementById('current32').value) || 0;
-            const current64 = parseInt(document.getElementById('current64').value) || 0;
-            const current128 = parseInt(document.getElementById('current128').value) || 0;
+        let currentFormulaCount = 0;
+        let destinationFormulaCount = 0;
 
-            const destinationOZ = parseInt(document.getElementById('destinationOZ').value) || 0;
-            const destination32 = parseInt(document.getElementById('destination32').value) || 0;
-            const destination64 = parseInt(document.getElementById('destination64').value) || 0;
-            const destination128 = parseInt(document.getElementById('destination128').value) || 0;
+        function addCurrentFormula() {
+            if (currentFormulaCount < 10) {
+                const container = document.getElementById('currentFormulaContainer');
+                container.innerHTML += createFormulaSection('current', currentFormulaCount);
+                currentFormulaCount++;
+            }
+        }
 
-            const diffOZ = destinationOZ - currentOZ;
-            const diff32 = destination32 - current32;
-            const diff64 = destination64 - current64;
-            const diff128 = destination128 - current128;
+        function addDestinationFormula() {
+            if (destinationFormulaCount < 10) {
+                const container = document.getElementById('destinationFormulaContainer');
+                container.innerHTML += createFormulaSection('destination', destinationFormulaCount);
+                destinationFormulaCount++;
+            }
+        }
 
-            let resultText = `
-                <h2>Difference</h2>
-                <p>OZ: ${diffOZ}</p>
-                <p>32: ${diff32}</p>
-                <p>64: ${diff64}</p>
-                <p>128: ${diff128}</p>
+        function createFormulaSection(type, index) {
+            return `
+                <div class="formula">
+                    <div class="row">
+                        <label for="${type}Colorant${index}">Colorant:</label>
+                        <select id="${type}Colorant${index}" name="${type}Colorant${index}">
+                            <option value="B1">B1 (Black)</option>
+                            <option value="R2">R2 (New Red)</option>
+                            <option value="Y1">Y1 (Yellow)</option>
+                            <option value="Y3">Y3 (Deep Gold)</option>
+                            <option value="W1">W1 (White)</option>
+                            <option value="N1">N1 (Raw Amber)</option>
+                            <option value="R2">R2 (Maroon)</option>
+                            <option value="L1">L1 (Bleu)</option>
+                            <option value="G2">G2 (New Green)</option>
+                            <option value="R3">R3 (Magenta)</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <label for="${type}OZ${index}">OZ:</label>
+                        <input type="number" id="${type}OZ${index}" name="${type}OZ${index}" max="32">
+                    </div>
+                    <div class="row">
+                        <label for="${type}32${index}">32:</label>
+                        <input type="number" id="${type}32${index}" name="${type}32${index}" max="32">
+                    </div>
+                    <div class="row">
+                        <label for="${type}64${index}">64:</label>
+                        <input type="number" id="${type}64${index}" name="${type}64${index}" max="2">
+                    </div>
+                    <div class="row">
+                        <label for="${type}128${index}">128:</label>
+                        <input type="number" id="${type}128${index}" name="${type}128${index}" max="4">
+                    </div>
+                </div>
             `;
+        }
 
-            if (diffOZ < 0 || diff32 < 0 || diff64 < 0 || diff128 < 0) {
-                resultText += `<p style="color: red;">This set of ingredients is not doable.</p>`;
-            } else {
-                resultText += `<p style="color: green;">The color is savable.</p>`;
+        function calculateDifference() {
+            let resultText = '<h2>Difference</h2>';
+
+            for (let i = 0; i < Math.max(currentFormulaCount, destinationFormulaCount); i++) {
+                const currentOZ = parseInt(document.getElementById(`currentOZ${i}`)?.value) || 0;
+                const current32 = parseInt(document.getElementById(`current32${i}`)?.value) || 0;
+                const current64 = parseInt(document.getElementById(`current64${i}`)?.value) || 0;
+                const current128 = parseInt(document.getElementById(`current128${i}`)?.value) || 0;
+
+                const destinationOZ = parseInt(document.getElementById(`destinationOZ${i}`)?.value) || 0;
+                const destination32 = parseInt(document.getElementById(`destination32${i}`)?.value) || 0;
+                const destination64 = parseInt(document.getElementById(`destination64${i}`)?.value) || 0;
+                const destination128 = parseInt(document.getElementById(`destination128${i}`)?.value) || 0;
+
+                const diffOZ = destinationOZ - currentOZ;
+                const diff32 = destination32 - current32;
+                const diff64 = destination64 - current64;
+                const diff128 = destination128 - current128;
+
+                resultText += `
+                    <h3>Colorant Set ${i + 1}</h3>
+                    <p>OZ: ${diffOZ}</p>
+                    <p>32: ${diff32}</p>
+                    <p>64: ${diff64}</p>
+                    <p>128: ${diff128}</p>
+                `;
+
+                if (diffOZ < 0 || diff32 < 0 || diff64 < 0 || diff128 < 0) {
+                    resultText += `<p style="color: red;">This set of ingredients is not doable.</p>`;
+                } else {
+                    resultText += `<p style="color: green;">The color is savable.</p>`;
+                }
             }
 
             document.getElementById('result').innerHTML = resultText;
