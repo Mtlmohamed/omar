@@ -1,11 +1,124 @@
 <!DOCTYPE html>
-<html lang="en-US">
-  
+<html lang="en">
 <head>
-
-<title>Sharafath</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paint Ingredient Calculator</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+    <div class="container">
+        <h1>Paint Ingredient Calculator</h1>
+        <form id="paintForm">
+            <h2>Current Formula</h2>
+            <div class="formula">
+                <div class="row">
+                    <label for="currentColorant">Colorant:</label>
+                    <select id="currentColorant" name="currentColorant">
+                        <option value="B1">B1 (Black)</option>
+                        <option value="R2">R2 (New Red)</option>
+                        <option value="Y1">Y1 (Yellow)</option>
+                        <option value="Y3">Y3 (Deep Gold)</option>
+                        <option value="W1">W1 (White)</option>
+                        <option value="N1">N1 (Raw Amber)</option>
+                        <option value="R2">R2 (Maroon)</option>
+                        <option value="L1">L1 (Bleu)</option>
+                        <option value="G2">G2 (New Green)</option>
+                        <option value="R3">R3 (Magenta)</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <label for="currentOZ">OZ:</label>
+                    <input type="number" id="currentOZ" name="currentOZ" max="32">
+                </div>
+                <div class="row">
+                    <label for="current32">32:</label>
+                    <input type="number" id="current32" name="current32" max="32">
+                </div>
+                <div class="row">
+                    <label for="current64">64:</label>
+                    <input type="number" id="current64" name="current64" max="2">
+                </div>
+                <div class="row">
+                    <label for="current128">128:</label>
+                    <input type="number" id="current128" name="current128" max="4">
+                </div>
+            </div>
+            
+            <h2>Destination Formula</h2>
+            <div class="formula">
+                <div class="row">
+                    <label for="destinationColorant">Colorant:</label>
+                    <select id="destinationColorant" name="destinationColorant">
+                        <option value="B1">B1 (Black)</option>
+                        <option value="R2">R2 (New Red)</option>
+                        <option value="Y1">Y1 (Yellow)</option>
+                        <option value="Y3">Y3 (Deep Gold)</option>
+                        <option value="W1">W1 (White)</option>
+                        <option value="N1">N1 (Raw Amber)</option>
+                        <option value="R2">R2 (Maroon)</option>
+                        <option value="L1">L1 (Bleu)</option>
+                        <option value="G2">G2 (New Green)</option>
+                        <option value="R3">R3 (Magenta)</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <label for="destinationOZ">OZ:</label>
+                    <input type="number" id="destinationOZ" name="destinationOZ" max="32">
+                </div>
+                <div class="row">
+                    <label for="destination32">32:</label>
+                    <input type="number" id="destination32" name="destination32" max="32">
+                </div>
+                <div class="row">
+                    <label for="destination64">64:</label>
+                    <input type="number" id="destination64" name="destination64" max="2">
+                </div>
+                <div class="row">
+                    <label for="destination128">128:</label>
+                    <input type="number" id="destination128" name="destination128" max="4">
+                </div>
+            </div>
+
+            <button type="button" onclick="calculateDifference()">Calculate Difference</button>
+        </form>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function calculateDifference() {
+            const currentOZ = parseInt(document.getElementById('currentOZ').value) || 0;
+            const current32 = parseInt(document.getElementById('current32').value) || 0;
+            const current64 = parseInt(document.getElementById('current64').value) || 0;
+            const current128 = parseInt(document.getElementById('current128').value) || 0;
+
+            const destinationOZ = parseInt(document.getElementById('destinationOZ').value) || 0;
+            const destination32 = parseInt(document.getElementById('destination32').value) || 0;
+            const destination64 = parseInt(document.getElementById('destination64').value) || 0;
+            const destination128 = parseInt(document.getElementById('destination128').value) || 0;
+
+            const diffOZ = destinationOZ - currentOZ;
+            const diff32 = destination32 - current32;
+            const diff64 = destination64 - current64;
+            const diff128 = destination128 - current128;
+
+            let resultText = `
+                <h2>Difference</h2>
+                <p>OZ: ${diffOZ}</p>
+                <p>32: ${diff32}</p>
+                <p>64: ${diff64}</p>
+                <p>128: ${diff128}</p>
+            `;
+
+            if (diffOZ < 0 || diff32 < 0 || diff64 < 0 || diff128 < 0) {
+                resultText += `<p style="color: red;">This set of ingredients is not doable.</p>`;
+            } else {
+                resultText += `<p style="color: green;">The color is savable.</p>`;
+            }
+
+            document.getElementById('result').innerHTML = resultText;
+        }
+    </script>
 </body>
 </html>
