@@ -113,16 +113,18 @@
                 }
 
                 // Calculate the differences in terms of OZ, 32, 64, 128
-                const diffOZ = Math.floor(diffDrops / 32);
-                let remainder = diffDrops % 32;
+                let remainingDrops = diffDrops;
+                
+                const diffOZ = Math.floor(remainingDrops / 32);
+                remainingDrops %= 32;
 
-                const diff32 = Math.floor(remainder);
-                remainder = remainder % 1;
+                const diff32 = Math.floor(remainingDrops);
+                remainingDrops %= 1;
 
-                const diff64 = Math.floor(remainder * 2);
-                remainder = (remainder * 2) % 1;
+                const diff64 = Math.floor(remainingDrops * 2);
+                remainingDrops = (remainingDrops * 2) % 1;
 
-                const diff128 = Math.round(remainder * 4);
+                const diff128 = Math.round(remainingDrops * 4);
 
                 resultText += `
                     <h3>Colorant Set ${i + 1}</h3>
