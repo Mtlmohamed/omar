@@ -136,8 +136,8 @@
                     diffDrops -= 0.25;
                 }
 
-                // Ensure correct balance when the destination requires smaller units that are not available in the current formula
-                if (current128 > 0 && destination32 > 0) {
+                // Balance remaining drops considering smallest units
+                if (diff32 >= 1 && current128 >= 1) {
                     diff64 += 1;
                     diff128 += 1;
                 }
