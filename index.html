@@ -83,86 +83,82 @@
         }
 
         function calculateDifference() {
-    let resultText = '<h2>Difference</h2>';
-    let doable = true;
+            let resultText = '<h2>Difference</h2>';
+            let doable = true;
 
-    for (let i = 0; i < Math.max(currentFormulaCount, destinationFormulaCount); i++) {
-        const currentOZ = parseInt(document.getElementById(`currentOZ${i}`)?.value) || 0;
-        const current32 = parseInt(document.getElementById(`current32${i}`)?.value) || 0;
-        const current64 = parseInt(document.getElementById(`current64${i}`)?.value) || 0;
-        const current128 = parseInt(document.getElementById(`current128${i}`)?.value) || 0;
+            for (let i = 0; i < Math.max(currentFormulaCount, destinationFormulaCount); i++) {
+                const currentOZ = parseInt(document.getElementById(`currentOZ${i}`)?.value) || 0;
+                const current32 = parseInt(document.getElementById(`current32${i}`)?.value) || 0;
+                const current64 = parseInt(document.getElementById(`current64${i}`)?.value) || 0;
+                const current128 = parseInt(document.getElementById(`current128${i}`)?.value) || 0;
 
-        const destinationOZ = parseInt(document.getElementById(`destinationOZ${i}`)?.value) || 0;
-        const destination32 = parseInt(document.getElementById(`destination32${i}`)?.value) || 0;
-        const destination64 = parseInt(document.getElementById(`destination64${i}`)?.value) || 0;
-        const destination128 = parseInt(document.getElementById(`destination128${i}`)?.value) || 0;
+                const destinationOZ = parseInt(document.getElementById(`destinationOZ${i}`)?.value) || 0;
+                const destination32 = parseInt(document.getElementById(`destination32${i}`)?.value) || 0;
+                const destination64 = parseInt(document.getElementById(`destination64${i}`)?.value) || 0;
+                const destination128 = parseInt(document.getElementById(`destination128${i}`)?.value) || 0;
 
-        // Convert all to droplets
-        let currentTotalDrops = (currentOZ * 32) + current32 + (current64 * 2) + (current128 * 0.5);
-        let destinationTotalDrops = (destinationOZ * 32) + destination32 + (destination64 * 2) + (destination128 * 0.5);
+                // Convert all to droplets
+                let currentTotalDrops = (currentOZ * 32) + current32 + (current64 * 2) + (current128 * 0.5);
+                let destinationTotalDrops = (destinationOZ * 32) + destination32 + (destination64 * 2) + (destination128 * 0.5);
 
-        let diffDrops = destinationTotalDrops - currentTotalDrops;
+                let diffDrops = destinationTotalDrops - currentTotalDrops;
 
-        if (diffDrops < 0) {
-            doable = false;
-            resultText += `
-                <h3>Colorant Set ${i + 1}</h3>
-                <p>This set of ingredients is not doable.</p>
-            `;
-            continue;
-        }
+                if (diffDrops < 0) {
+                    doable = false;
+                    resultText += `
+                        <h3>Colorant Set ${i + 1}</h3>
+                        <p>This set of ingredients is not doable.</p>
+                    `;
+                    continue;
+                }
 
-        // Calculate the differences in terms of OZ, 32, 64, 128
-        let diffOZ = 0;
-        let diff32 = 0;
-        let diff64 = 0;
-        let diff128 = 0;
+                // Initialize the differences
+                let diffOZ = 0;
+                let diff32 = 0;
+                let diff64 = 0;
+                let diff128 = 0;
 
-        // Balance drops based on the given rules
-        while (diffDrops >= 32) {
-            diffOZ += 1;
-            diffDrops -= 32;
-        }
-        while (diffDrops >= 1) {
-            diff32 += 1;
-            diffDrops -= 1;
-        }
-        while (diffDrops >= 0.5) {
-            diff64 += 1;
-            diffDrops -= 0.5;
-        }
-        while (diffDrops >= 0.25) {
-            diff128 += 1;
-            diffDrops -= 0.25;
-        }
+                // Calculate the differences
+                while (diffDrops >= 32) {
+                    diffOZ += 1;
+                    diffDrops -= 32;
+                }
+                while (diffDrops >= 1) {
+                    diff32 += 1;
+                    diffDrops -= 1;
+                }
+                while (diffDrops >= 0.5) {
+                    diff64 += 1;
+                    diffDrops -= 0.5;
+                }
+                while (diffDrops >= 0.25) {
+                    diff128 += 1;
+                    diffDrops -= 0.25;
+                }
 
-        // Ensure that the smallest units are correctly handled
-        while (diff128 >= 2) {
-            diff64 += 1;
-            diff128 -= 2;
-        }
-        while (diff64 >= 2) {
-            diff32 += 1;
-            diff64 -= 2;
-        }
-        while (diff32 >= 32) {
-            diffOZ += 1;
-            diff32 -= 32;
-        }
+                // Balance the smallest units
+                while (diff128 >= 2) {
+                    diff64 += 1;
+                    diff128 -= 2;
+                }
+                while (diff64 >= 2) {
+                    diff32 += 1;
+                    diff64 -= 2;
+                }
+                while (diff32 >= 32) {
+                    diffOZ += 1;
+                    diff32 -= 32;
+                }
 
-        resultText += `
-            <h3>Colorant Set ${i + 1}</h3>
-            <p>OZ: ${diffOZ}</p>
-            <p>32: ${diff32}</p>
-            <p>64: ${diff64}</p>
-            <p>128: ${diff128}</p>
-            <p style="color: green;">The color is savable.</p>
-        `;
-    }
-
-    document.getElementById('result').innerHTML = resultText;
-}
-
+                resultText += `
+                    <h3>Colorant Set ${i + 1}</h3>
+                    <p>OZ: ${diffOZ}</p>
+                    <p>32: ${diff32}</p>
+                    <p>64: ${diff64}</p>
+                    <p>128: ${diff128}</p>
+                    <p style="color: green;">The color is savable.</p>
+                `;
+            }
 
             document.getElementById('result').innerHTML = resultText;
         }
