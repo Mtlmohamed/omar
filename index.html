@@ -98,10 +98,10 @@
                 const destination128 = parseInt(document.getElementById(`destination128${i}`)?.value) || 0;
 
                 // Convert all to droplets
-                const currentTotalDrops = (currentOZ * 32) + current32 + (current64 * 2) + (current128 * 0.5);
-                const destinationTotalDrops = (destinationOZ * 32) + destination32 + (destination64 * 2) + (destination128 * 0.5);
+                let currentTotalDrops = (currentOZ * 32) + current32 + (current64 * 2) + (current128 * 0.5);
+                let destinationTotalDrops = (destinationOZ * 32) + destination32 + (destination64 * 2) + (destination128 * 0.5);
 
-                const diffDrops = destinationTotalDrops - currentTotalDrops;
+                let diffDrops = destinationTotalDrops - currentTotalDrops;
 
                 if (diffDrops < 0) {
                     doable = false;
@@ -118,26 +118,4 @@
                 const diffOZ = Math.floor(remainingDrops / 32);
                 remainingDrops %= 32;
 
-                const diff32 = Math.floor(remainingDrops);
-                remainingDrops %= 1;
-
-                const diff64 = Math.floor(remainingDrops * 2);
-                remainingDrops = (remainingDrops * 2) % 1;
-
-                const diff128 = Math.round(remainingDrops * 4);
-
-                resultText += `
-                    <h3>Colorant Set ${i + 1}</h3>
-                    <p>OZ: ${diffOZ}</p>
-                    <p>32: ${diff32}</p>
-                    <p>64: ${diff64}</p>
-                    <p>128: ${diff128}</p>
-                    <p style="color: green;">The color is savable.</p>
-                `;
-            }
-
-            document.getElementById('result').innerHTML = resultText;
-        }
-    </script>
-</body>
-</html>
+                const diff32 = Math.floor(remainingDrops
