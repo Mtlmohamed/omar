@@ -84,6 +84,7 @@
 
         function calculateDifference() {
             let resultText = '<h2>Difference</h2>';
+            let doable = true;
 
             for (let i = 0; i < Math.max(currentFormulaCount, destinationFormulaCount); i++) {
                 const currentOZ = parseInt(document.getElementById(`currentOZ${i}`)?.value) || 0;
@@ -96,10 +97,32 @@
                 const destination64 = parseInt(document.getElementById(`destination64${i}`)?.value) || 0;
                 const destination128 = parseInt(document.getElementById(`destination128${i}`)?.value) || 0;
 
-                const diffOZ = destinationOZ - currentOZ;
-                const diff32 = destination32 - current32;
-                const diff64 = destination64 - current64;
-                const diff128 = destination128 - current128;
+                // Convert all to droplets
+                const currentTotalDrops = (currentOZ * 32) + current32 + (current64 * 2) + (current128 * 0.5);
+                const destinationTotalDrops = (destinationOZ * 32) + destination32 + (destination64 * 2) + (destination128 * 0.5);
+
+                const diffDrops = destinationTotalDrops - currentTotalDrops;
+
+                if (diffDrops < 0) {
+                    doable = false;
+                    resultText += `
+                        <h3>Colorant Set ${i + 1}</h3>
+                        <p>This set of ingredients is not doable.</p>
+                    `;
+                    continue;
+                }
+
+                // Calculate the differences in terms of OZ, 32, 64, 128
+                const diffOZ = Math.floor(diffDrops / 32);
+                let remainder = diffDrops % 32;
+
+                const diff32 = Math.floor(remainder);
+                remainder = remainder % 1;
+
+                const diff64 = Math.floor(remainder * 2);
+                remainder = (remainder * 2) % 1;
+
+                const diff128 = Math.round(remainder * 4);
 
                 resultText += `
                     <h3>Colorant Set ${i + 1}</h3>
@@ -107,13 +130,8 @@
                     <p>32: ${diff32}</p>
                     <p>64: ${diff64}</p>
                     <p>128: ${diff128}</p>
+                    <p style="color: green;">The color is savable.</p>
                 `;
-
-                if (diffOZ < 0 || diff32 < 0 || diff64 < 0 || diff128 < 0) {
-                    resultText += `<p style="color: red;">This set of ingredients is not doable.</p>`;
-                } else {
-                    resultText += `<p style="color: green;">The color is savable.</p>`;
-                }
             }
 
             document.getElementById('result').innerHTML = resultText;
