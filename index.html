@@ -113,31 +113,26 @@
                 }
 
                 // Calculate the differences in terms of OZ, 32, 64, 128
-                let remainingDrops = diffDrops;
-                
-                const diffOZ = Math.floor(remainingDrops / 32);
-                remainingDrops %= 32;
+                let diffOZ = 0;
+                let diff32 = 0;
+                let diff64 = 0;
+                let diff128 = 0;
 
-                const diff32 = Math.floor(remainingDrops);
-                remainingDrops %= 1;
-
-                const diff64 = Math.floor(remainingDrops * 2);
-                remainingDrops = (remainingDrops * 2) % 1;
-
-                const diff128 = Math.round(remainingDrops * 4);
-
-                // Adjust the values to reflect the correct number of 64 and 128 drops
-                if (diff128 >= 2) {
-                    diff64 += Math.floor(diff128 / 2);
-                    diff128 %= 2;
+                while (diffDrops >= 32) {
+                    diffOZ += 1;
+                    diffDrops -= 32;
                 }
-                if (diff64 >= 2) {
-                    diff32 += Math.floor(diff64 / 2);
-                    diff64 %= 2;
+                while (diffDrops >= 1) {
+                    diff32 += 1;
+                    diffDrops -= 1;
                 }
-                if (diff32 >= 32) {
-                    diffOZ += Math.floor(diff32 / 32);
-                    diff32 %= 32;
+                while (diffDrops >= 0.5) {
+                    diff64 += 1;
+                    diffDrops -= 0.5;
+                }
+                while (diffDrops >= 0.25) {
+                    diff128 += 1;
+                    diffDrops -= 0.25;
                 }
 
                 resultText += `
