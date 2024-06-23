@@ -118,21 +118,36 @@
                 let diff64 = 0;
                 let diff128 = 0;
 
-                while (diffDrops >= 32) {
-                    diffOZ += 1;
-                    diffDrops -= 32;
+                // Convert the difference back into the appropriate droplet units
+                if (diffDrops >= 32) {
+                    diffOZ = Math.floor(diffDrops / 32);
+                    diffDrops -= diffOZ * 32;
                 }
-                while (diffDrops >= 1) {
-                    diff32 += 1;
-                    diffDrops -= 1;
+                if (diffDrops >= 1) {
+                    diff32 = Math.floor(diffDrops);
+                    diffDrops -= diff32;
                 }
-                while (diffDrops >= 0.5) {
-                    diff64 += 1;
-                    diffDrops -= 0.5;
+                if (diffDrops >= 0.5) {
+                    diff64 = Math.floor(diffDrops / 0.5);
+                    diffDrops -= diff64 * 0.5;
                 }
-                while (diffDrops >= 0.25) {
-                    diff128 += 1;
-                    diffDrops -= 0.25;
+                if (diffDrops >= 0.25) {
+                    diff128 = Math.floor(diffDrops / 0.25);
+                    diffDrops -= diff128 * 0.25;
+                }
+
+                // Ensure that the smallest units are correctly handled
+                if (diff128 >= 2) {
+                    diff64 += Math.floor(diff128 / 2);
+                    diff128 %= 2;
+                }
+                if (diff64 >= 2) {
+                    diff32 += Math.floor(diff64 / 2);
+                    diff64 %= 2;
+                }
+                if (diff32 >= 32) {
+                    diffOZ += Math.floor(diff32 / 32);
+                    diff32 %= 32;
                 }
 
                 resultText += `
