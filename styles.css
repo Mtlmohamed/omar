@@ -3,19 +3,33 @@ body {
     background-color: #f0f0f0;
     margin: 0;
     padding: 20px;
+    animation: fadeIn 2s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .container {
     max-width: 600px;
     margin: 0 auto;
-    background-color: white;
+    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    animation: slideIn 1s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
 h1, h2, h3 {
     text-align: center;
+    color: #333;
+    margin: 10px 0;
 }
 
 form {
@@ -24,6 +38,7 @@ form {
 
 .formula {
     margin-bottom: 20px;
+    animation: fadeIn 1s ease-in-out;
 }
 
 .row {
@@ -34,29 +49,49 @@ form {
 
 label {
     flex-basis: 30%;
+    color: #333;
 }
 
 input, select {
     flex-basis: 65%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s;
+}
+
+input:focus, select:focus {
+    border-color: #007BFF;
 }
 
 button {
     display: block;
     width: 100%;
     padding: 10px;
-    background-color: #007BFF;
+    background: linear-gradient(135deg, #007BFF, #0056b3);
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     margin-bottom: 10px;
+    transition: background 0.3s;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background: linear-gradient(135deg, #0056b3, #004080);
 }
 
 #result {
     text-align: center;
     margin-top: 20px;
+    color: #333;
+    animation: fadeIn 1s;
+}
+
+h2 {
+    color: #007BFF;
+}
+
+h3 {
+    color: #333;
 }
