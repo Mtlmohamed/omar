@@ -68,7 +68,7 @@ button {
     display: block;
     width: 100%;
     padding: 10px;
-    background: (#000000);
+    background: linear-gradient(135deg, #F43926, #1159A8);
     color: white;
     border: none;
     border-radius: 5px;
@@ -78,7 +78,7 @@ button {
 }
 
 button:hover {
-    background: linear-gradient(135deg, #F43926, #1159A8);
+    background: #000000;
 }
 
 #result {
