@@ -120,7 +120,6 @@
                     let current = currentFormulas[currentColor];
                     let destination = destinationFormulas[currentColor];
 
-                    // Check if the destination formula is greater than or equal to the current formula
                     if (
                         destination.OZ < current.OZ ||
                         destination[32] < current[32] ||
@@ -134,27 +133,16 @@
                         continue;
                     }
 
-                    let currentDrops = convertToDrops(current.OZ, current[32], current[64], current[128]);
-                    let destinationDrops = convertToDrops(destination.OZ, destination[32], destination[64], destination[128]);
+                    let diff = calculateIngredientDifference(current, destination);
 
-                    if (destinationDrops >= currentDrops) {
-                        let diffDrops = destinationDrops - currentDrops;
-                        let diff = convertDropsToUnits(diffDrops);
-
-                        resultText += `
-                            <h3>${currentColor}</h3>
-                            <p>OZ: ${diff.OZ}</p>
-                            <p>32: ${diff[32]}</p>
-                            <p>64: ${diff[64]}</p>
-                            <p>128: ${diff[128]}</p>
-                            <p style="color: green;">The color is savable.</p>
-                        `;
-                    } else {
-                        resultText += `
-                            <h3>${currentColor}</h3>
-                            <p style="color: red;">This set of ingredients is not doable.</p>
-                        `;
-                    }
+                    resultText += `
+                        <h3>${currentColor}</h3>
+                        <p>OZ: ${diff.OZ}</p>
+                        <p>32: ${diff[32]}</p>
+                        <p>64: ${diff[64]}</p>
+                        <p>128: ${diff[128]}</p>
+                        <p style="color: green;">The color is savable.</p>
+                    `;
                 }
             }
 
@@ -203,6 +191,27 @@
             }
 
             return { OZ, 32: d32, 64: d64, 128: d128 };
+        }
+
+        function calculateIngredientDifference(current, destination) {
+            let currentDrops = convertToDrops(current.OZ, current[32], current[64], current[128]);
+            let destinationDrops = convertToDrops(destination.OZ, destination[32], destination[64], destination[128]);
+
+            let diffDrops = destinationDrops - currentDrops;
+
+            let diffOZ = Math.floor(diffDrops / 32);
+            diffDrops %= 32;
+
+            let diff32 = Math.floor(diffDrops / 1);
+            diffDrops %= 1;
+
+            let diff64 = Math.floor(diffDrops / 0.5);
+            diffDrops %= 0.5;
+
+            let diff128 = Math.floor(diffDrops / 0.25);
+            diffDrops %= 0.25;
+
+            return { OZ: diffOZ, 32: diff32, 64: diff64, 128: diff128 };
         }
     </script>
 </body>
