@@ -120,19 +120,10 @@
                     let current = currentFormulas[currentColor];
                     let destination = destinationFormulas[currentColor];
 
-                    // Check if the destination formula has enough of each component
                     let currentDrops = convertToDrops(current.OZ, current[32], current[64], current[128]);
                     let destinationDrops = convertToDrops(destination.OZ, destination[32], destination[64], destination[128]);
 
-                    if (current.OZ > destination.OZ ||
-                        current[32] > destination[32] + (destination[64] * 2) + (destination[128] * 4) ||
-                        current[64] > destination[64] + (destination[128] * 2) ||
-                        current[128] > destination[128]) {
-                        resultText += `
-                            <h3>${currentColor}</h3>
-                            <p style="color: red;">This set of ingredients is not doable.</p>
-                        `;
-                    } else {
+                    if (destinationDrops >= currentDrops) {
                         let diffDrops = destinationDrops - currentDrops;
 
                         let diff = convertDropsToUnits(diffDrops);
@@ -144,6 +135,11 @@
                             <p>64: ${diff[64]}</p>
                             <p>128: ${diff[128]}</p>
                             <p style="color: green;">The color is savable.</p>
+                        `;
+                    } else {
+                        resultText += `
+                            <h3>${currentColor}</h3>
+                            <p style="color: red;">This set of ingredients is not doable.</p>
                         `;
                     }
                 }
