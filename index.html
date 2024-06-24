@@ -163,8 +163,8 @@
 
         function isSavable(current, destination) {
             return destination.OZ >= current.OZ &&
-                   destination[32] + (destination[64] * 2) + (destination[128] * 4) >= current[32] &&
-                   destination[64] + (destination[128] * 2) >= current[64] &&
+                   destination[32] >= current[32] &&
+                   destination[64] >= current[64] &&
                    destination[128] >= current[128];
         }
 
@@ -196,12 +196,13 @@
         }
 
         function calculateIngredientDifference(current, destination) {
-            let currentDrops = convertToDrops(current.OZ, current[32], current[64], current[128]);
-            let destinationDrops = convertToDrops(destination.OZ, destination[32], destination[64], destination[128]);
+            let diffOZ = destination.OZ - current.OZ;
+            let diff32 = destination[32] - current[32];
+            let diff64 = destination[64] - current[64];
+            let diff128 = destination[128] - current[128];
 
-            let diffDrops = destinationDrops - currentDrops;
-
-            return convertDropsToUnits(diffDrops);
+            let totalDrops = convertToDrops(diffOZ, diff32, diff64, diff128);
+            return convertDropsToUnits(totalDrops);
         }
     </script>
 </body>
