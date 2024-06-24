@@ -120,12 +120,25 @@
                     let current = currentFormulas[currentColor];
                     let destination = destinationFormulas[currentColor];
 
+                    // Check if the destination formula is greater than or equal to the current formula
+                    if (
+                        destination.OZ < current.OZ ||
+                        destination[32] < current[32] ||
+                        destination[64] < current[64] ||
+                        destination[128] < current[128]
+                    ) {
+                        resultText += `
+                            <h3>${currentColor}</h3>
+                            <p style="color: red;">This set of ingredients is not doable.</p>
+                        `;
+                        continue;
+                    }
+
                     let currentDrops = convertToDrops(current.OZ, current[32], current[64], current[128]);
                     let destinationDrops = convertToDrops(destination.OZ, destination[32], destination[64], destination[128]);
 
                     if (destinationDrops >= currentDrops) {
                         let diffDrops = destinationDrops - currentDrops;
-
                         let diff = convertDropsToUnits(diffDrops);
 
                         resultText += `
