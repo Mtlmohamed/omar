@@ -120,13 +120,9 @@
                     let current = currentFormulas[currentColor];
                     let destination = destinationFormulas[currentColor];
 
-                    let currentDrops = convertToDrops(current.OZ, current[32], current[64], current[128]);
-                    let destinationDrops = convertToDrops(destination.OZ, destination[32], destination[64], destination[128]);
-
-                    if (destinationDrops >= currentDrops) {
-                        let diffDrops = destinationDrops - currentDrops;
-
-                        let diff = convertDropsToUnits(diffDrops);
+                    // Check if the destination formula has enough of each component
+                    if (isSavable(current, destination)) {
+                        let diff = calculateIngredientDifference(current, destination);
 
                         resultText += `
                             <h3>${currentColor}</h3>
@@ -165,6 +161,13 @@
             return formulas;
         }
 
+        function isSavable(current, destination) {
+            return destination.OZ >= current.OZ &&
+                   destination[32] + (destination[64] * 2) + (destination[128] * 4) >= current[32] &&
+                   destination[64] + (destination[128] * 2) >= current[64] &&
+                   destination[128] >= current[128];
+        }
+
         function convertToDrops(OZ, d32, d64, d128) {
             return (OZ * 32) + d32 + (d64 * 2) + (d128 * 0.25);
         }
@@ -190,6 +193,15 @@
             }
 
             return { OZ, 32: d32, 64: d64, 128: d128 };
+        }
+
+        function calculateIngredientDifference(current, destination) {
+            let currentDrops = convertToDrops(current.OZ, current[32], current[64], current[128]);
+            let destinationDrops = convertToDrops(destination.OZ, destination[32], destination[64], destination[128]);
+
+            let diffDrops = destinationDrops - currentDrops;
+
+            return convertDropsToUnits(diffDrops);
         }
     </script>
 </body>
