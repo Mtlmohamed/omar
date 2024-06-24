@@ -82,10 +82,6 @@
             `;
         }
 
-        function convertToDrops(OZ, d32, d64, d128) {
-            return (OZ * 32) + d32 + (d64 * 2) + (d128 * 0.5);
-        }
-
         function calculateDifference() {
             let resultText = '<h2>Difference</h2>';
 
@@ -101,8 +97,8 @@
                 const destination128 = parseInt(document.getElementById(`destination128${i}`)?.value) || 0;
 
                 // Convert all to droplets
-                let currentTotalDrops = convertToDrops(currentOZ, current32, current64, current128);
-                let destinationTotalDrops = convertToDrops(destinationOZ, destination32, destination64, destination128);
+                let currentTotalDrops = (currentOZ * 32) + current32 + (current64 * 2) + (current128 * 0.5);
+                let destinationTotalDrops = (destinationOZ * 32) + destination32 + (destination64 * 2) + (destination128 * 0.5);
 
                 let diffDrops = destinationTotalDrops - currentTotalDrops;
 
@@ -121,35 +117,37 @@
                 let diff128 = 0;
 
                 // Calculate the differences
-                while (diffDrops >= 32) {
-                    diffOZ += 1;
-                    diffDrops -= 32;
+                diffOZ = destinationOZ - currentOZ;
+                diff32 = destination32 - current32;
+                diff64 = destination64 - current64;
+                diff128 = destination128 - current128;
+
+                // Normalize negative differences by converting units
+                while (diff128 < 0 && diff64 > 0) {
+                    diff128 += 2;
+                    diff64 -= 1;
                 }
-                while (diffDrops >= 1) {
-                    diff32 += 1;
-                    diffDrops -= 1;
+                while (diff64 < 0 && diff32 > 0) {
+                    diff64 += 2;
+                    diff32 -= 1;
                 }
-                while (diffDrops >= 0.5) {
-                    diff64 += 1;
-                    diffDrops -= 0.5;
-                }
-                while (diffDrops >= 0.25) {
-                    diff128 += 1;
-                    diffDrops -= 0.25;
+                while (diff32 < 0 && diffOZ > 0) {
+                    diff32 += 32;
+                    diffOZ -= 1;
                 }
 
-                // Balance the smallest units
-                if (diff128 >= 4) {
-                    diff32 += Math.floor(diff128 / 4);
-                    diff128 %= 4;
+                // Convert smaller units to larger units where possible
+                while (diff128 >= 4) {
+                    diff32 += 1;
+                    diff128 -= 4;
                 }
-                if (diff64 >= 2) {
-                    diff32 += Math.floor(diff64 / 2);
-                    diff64 %= 2;
+                while (diff64 >= 2) {
+                    diff32 += 1;
+                    diff64 -= 2;
                 }
-                if (diff32 >= 32) {
-                    diffOZ += Math.floor(diff32 / 32);
-                    diff32 %= 32;
+                while (diff32 >= 32) {
+                    diffOZ += 1;
+                    diff32 -= 32;
                 }
 
                 resultText += `
