@@ -29,26 +29,22 @@
         let destinationFormulaCount = 0;
 
         function addCurrentFormula() {
-            if (currentFormulaCount < 10) {
-                const container = document.getElementById('currentFormulaContainer');
-                container.innerHTML += createFormulaSection('current', currentFormulaCount);
-                currentFormulaCount++;
-            }
+            const container = document.getElementById('currentFormulaContainer');
+            container.innerHTML += createFormulaSection('current', currentFormulaCount);
+            currentFormulaCount++;
         }
 
         function addDestinationFormula() {
-            if (destinationFormulaCount < 10) {
-                const container = document.getElementById('destinationFormulaContainer');
-                container.innerHTML += createFormulaSection('destination', destinationFormulaCount);
-                destinationFormulaCount++;
-            }
+            const container = document.getElementById('destinationFormulaContainer');
+            container.innerHTML += createFormulaSection('destination', destinationFormulaCount);
+            destinationFormulaCount++;
         }
 
         function createFormulaSection(type, index) {
             return `
-                <div class="formula">
+                <div class="formula" id="${type}Formula${index}">
                     <div class="row">
-                        <label for="${type}Colorant${index}">Colorant:</label>
+                        <label for="${type}Colorant${index}">Choose Color name:</label>
                         <select id="${type}Colorant${index}" name="${type}Colorant${index}">
                             <option value="B1">B1 (Black)</option>
                             <option value="R2">R2 (New Red)</option>
@@ -57,7 +53,7 @@
                             <option value="W1">W1 (White)</option>
                             <option value="N1">N1 (Raw Amber)</option>
                             <option value="R2">R2 (Maroon)</option>
-                            <option value="L1">L1 (Bleu)</option>
+                            <option value="L1">L1 (Blue)</option>
                             <option value="G2">G2 (New Green)</option>
                             <option value="R3">R3 (Magenta)</option>
                         </select>
@@ -85,82 +81,84 @@
         function calculateDifference() {
             let resultText = '<h2>Difference</h2>';
 
-            for (let i = 0; i < Math.max(currentFormulaCount, destinationFormulaCount); i++) {
-                const currentOZ = parseInt(document.getElementById(`currentOZ${i}`)?.value) || 0;
-                const current32 = parseInt(document.getElementById(`current32${i}`)?.value) || 0;
-                const current64 = parseInt(document.getElementById(`current64${i}`)?.value) || 0;
-                const current128 = parseInt(document.getElementById(`current128${i}`)?.value) || 0;
+            let currentFormulas = getFormulas('current');
+            let destinationFormulas = getFormulas('destination');
 
-                const destinationOZ = parseInt(document.getElementById(`destinationOZ${i}`)?.value) || 0;
-                const destination32 = parseInt(document.getElementById(`destination32${i}`)?.value) || 0;
-                const destination64 = parseInt(document.getElementById(`destination64${i}`)?.value) || 0;
-                const destination128 = parseInt(document.getElementById(`destination128${i}`)?.value) || 0;
+            for (let currentColor in currentFormulas) {
+                if (destinationFormulas.hasOwnProperty(currentColor)) {
+                    let current = currentFormulas[currentColor];
+                    let destination = destinationFormulas[currentColor];
 
-                // Convert all to droplets
-                let currentTotalDrops = (currentOZ * 32) + current32 + (current64 * 2) + (current128 * 0.5);
-                let destinationTotalDrops = (destinationOZ * 32) + destination32 + (destination64 * 2) + (destination128 * 0.5);
+                    let currentDrops = convertToDrops(current.OZ, current[32], current[64], current[128]);
+                    let destinationDrops = convertToDrops(destination.OZ, destination[32], destination[64], destination[128]);
 
-                let diffDrops = destinationTotalDrops - currentTotalDrops;
+                    if (destinationDrops >= currentDrops) {
+                        let diffDrops = destinationDrops - currentDrops;
 
-                if (diffDrops < 0) {
-                    resultText += `
-                        <h3>Colorant Set ${i + 1}</h3>
-                        <p>This set of ingredients is not doable.</p>
-                    `;
-                    continue;
+                        let diff = convertDropsToUnits(diffDrops);
+
+                        resultText += `
+                            <h3>${currentColor}</h3>
+                            <p>OZ: ${diff.OZ}</p>
+                            <p>32: ${diff[32]}</p>
+                            <p>64: ${diff[64]}</p>
+                            <p>128: ${diff[128]}</p>
+                            <p style="color: green;">The color is savable.</p>
+                        `;
+                    } else {
+                        resultText += `
+                            <h3>${currentColor}</h3>
+                            <p style="color: red;">This set of ingredients is not doable.</p>
+                        `;
+                    }
                 }
-
-                // Initialize the differences
-                let diffOZ = 0;
-                let diff32 = 0;
-                let diff64 = 0;
-                let diff128 = 0;
-
-                // Calculate the differences
-                diffOZ = destinationOZ - currentOZ;
-                diff32 = destination32 - current32;
-                diff64 = destination64 - current64;
-                diff128 = destination128 - current128;
-
-                // Normalize negative differences by converting units
-                while (diff128 < 0 && diff64 > 0) {
-                    diff128 += 2;
-                    diff64 -= 1;
-                }
-                while (diff64 < 0 && diff32 > 0) {
-                    diff64 += 2;
-                    diff32 -= 1;
-                }
-                while (diff32 < 0 && diffOZ > 0) {
-                    diff32 += 32;
-                    diffOZ -= 1;
-                }
-
-                // Convert smaller units to larger units where possible
-                while (diff128 >= 4) {
-                    diff32 += 1;
-                    diff128 -= 4;
-                }
-                while (diff64 >= 2) {
-                    diff32 += 1;
-                    diff64 -= 2;
-                }
-                while (diff32 >= 32) {
-                    diffOZ += 1;
-                    diff32 -= 32;
-                }
-
-                resultText += `
-                    <h3>Colorant Set ${i + 1}</h3>
-                    <p>OZ: ${diffOZ}</p>
-                    <p>32: ${diff32}</p>
-                    <p>64: ${diff64}</p>
-                    <p>128: ${diff128}</p>
-                    <p style="color: green;">The color is savable.</p>
-                `;
             }
 
             document.getElementById('result').innerHTML = resultText;
+        }
+
+        function getFormulas(type) {
+            let formulas = {};
+            let count = (type === 'current') ? currentFormulaCount : destinationFormulaCount;
+
+            for (let i = 0; i < count; i++) {
+                let color = document.getElementById(`${type}Colorant${i}`).value;
+                let OZ = parseInt(document.getElementById(`${type}OZ${i}`).value) || 0;
+                let d32 = parseInt(document.getElementById(`${type}32${i}`).value) || 0;
+                let d64 = parseInt(document.getElementById(`${type}64${i}`).value) || 0;
+                let d128 = parseInt(document.getElementById(`${type}128${i}`).value) || 0;
+
+                formulas[color] = { OZ, 32: d32, 64: d64, 128: d128 };
+            }
+
+            return formulas;
+        }
+
+        function convertToDrops(OZ, d32, d64, d128) {
+            return (OZ * 32) + d32 + (d64 * 2) + (d128 * 0.5);
+        }
+
+        function convertDropsToUnits(drops) {
+            let OZ = 0, d32 = 0, d64 = 0, d128 = 0;
+
+            while (drops >= 32) {
+                OZ += 1;
+                drops -= 32;
+            }
+            while (drops >= 1) {
+                d32 += 1;
+                drops -= 1;
+            }
+            while (drops >= 0.5) {
+                d64 += 1;
+                drops -= 0.5;
+            }
+            while (drops >= 0.25) {
+                d128 += 1;
+                drops -= 0.25;
+            }
+
+            return { OZ, 32: d32, 64: d64, 128: d128 };
         }
     </script>
 </body>
