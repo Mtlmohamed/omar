@@ -2,7 +2,7 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
     margin: 0;
-    padding: 35px;
+    padding: 30px;
     animation: fadeIn 2s;
 }
 
@@ -68,7 +68,7 @@ button {
     display: block;
     width: 100%;
     padding: 10px;
-    background: linear-gradient(135deg, #1159A8, #F43926);
+    background: linear-gradient(#000000);
     color: white;
     border: none;
     border-radius: 5px;
@@ -89,7 +89,7 @@ button:hover {
 }
 
 h2 {
-    color: #FFD700;
+    color: #ffffff;
 }
 
 h3 {
