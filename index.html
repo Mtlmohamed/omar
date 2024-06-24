@@ -120,9 +120,13 @@
                     let current = currentFormulas[currentColor];
                     let destination = destinationFormulas[currentColor];
 
-                    // Check if the destination formula has enough of each component
-                    if (isSavable(current, destination)) {
-                        let diff = calculateIngredientDifference(current, destination);
+                    // Convert everything to 128th units for comparison
+                    let currentTotal128 = convertTo128Units(current.OZ, current[32], current[64], current[128]);
+                    let destinationTotal128 = convertTo128Units(destination.OZ, destination[32], destination[64], destination[128]);
+
+                    if (destinationTotal128 >= currentTotal128) {
+                        let diff128 = destinationTotal128 - currentTotal128;
+                        let diff = convert128ToUnits(diff128);
 
                         resultText += `
                             <h3>${currentColor}</h3>
@@ -161,49 +165,25 @@
             return formulas;
         }
 
-        function isSavable(current, destination) {
-            // Convert destination to drops and compare with current in terms of drops
-            let currentDrops = convertToDrops(current.OZ, current[32], current[64], current[128]);
-            let destinationDrops = convertToDrops(destination.OZ, destination[32], destination[64], destination[128]);
-
-            return destinationDrops >= currentDrops;
+        function convertTo128Units(OZ, d32, d64, d128) {
+            return (OZ * 32 * 4) + (d32 * 4) + (d64 * 2) + d128;
         }
 
-        function convertToDrops(OZ, d32, d64, d128) {
-            return (OZ * 32) + d32 + (d64 * 2) + (d128 * 0.25);
-        }
+        function convert128ToUnits(total128) {
+            let OZ = Math.floor(total128 / (32 * 4));
+            total128 %= (32 * 4);
 
-        function convertDropsToUnits(drops) {
-            let OZ = 0, d32 = 0, d64 = 0, d128 = 0;
+            let d32 = Math.floor(total128 / 4);
+            total128 %= 4;
 
-            while (drops >= 32) {
-                OZ += 1;
-                drops -= 32;
-            }
-            while (drops >= 1) {
-                d32 += 1;
-                drops -= 1;
-            }
-            while (drops >= 0.5) {
-                d64 += 1;
-                drops -= 0.5;
-            }
-            while (drops >= 0.25) {
-                d128 += 1;
-                drops -= 0.25;
-            }
+            let d64 = Math.floor(total128 / 2);
+            total128 %= 2;
+
+            let d128 = total128;
 
             return { OZ, 32: d32, 64: d64, 128: d128 };
-        }
-
-        function calculateIngredientDifference(current, destination) {
-            let currentDrops = convertToDrops(current.OZ, current[32], current[64], current[128]);
-            let destinationDrops = convertToDrops(destination.OZ, destination[32], destination[64], destination[128]);
-
-            let diffDrops = destinationDrops - currentDrops;
-
-            return convertDropsToUnits(diffDrops);
         }
     </script>
 </body>
 </html>
+V
