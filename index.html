@@ -162,10 +162,11 @@
         }
 
         function isSavable(current, destination) {
-            return destination.OZ >= current.OZ &&
-                   destination[32] >= current[32] &&
-                   destination[64] >= current[64] &&
-                   destination[128] >= current[128];
+            // Convert destination to drops and compare with current in terms of drops
+            let currentDrops = convertToDrops(current.OZ, current[32], current[64], current[128]);
+            let destinationDrops = convertToDrops(destination.OZ, destination[32], destination[64], destination[128]);
+
+            return destinationDrops >= currentDrops;
         }
 
         function convertToDrops(OZ, d32, d64, d128) {
@@ -196,13 +197,12 @@
         }
 
         function calculateIngredientDifference(current, destination) {
-            let diffOZ = destination.OZ - current.OZ;
-            let diff32 = destination[32] - current[32];
-            let diff64 = destination[64] - current[64];
-            let diff128 = destination[128] - current[128];
+            let currentDrops = convertToDrops(current.OZ, current[32], current[64], current[128]);
+            let destinationDrops = convertToDrops(destination.OZ, destination[32], destination[64], destination[128]);
 
-            let totalDrops = convertToDrops(diffOZ, diff32, diff64, diff128);
-            return convertDropsToUnits(totalDrops);
+            let diffDrops = destinationDrops - currentDrops;
+
+            return convertDropsToUnits(diffDrops);
         }
     </script>
 </body>
