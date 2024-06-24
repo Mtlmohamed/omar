@@ -68,7 +68,7 @@ button {
     display: block;
     width: 100%;
     padding: 10px;
-    background: linear-gradient(#000000);
+    background: (#000000);
     color: white;
     border: none;
     border-radius: 5px;
